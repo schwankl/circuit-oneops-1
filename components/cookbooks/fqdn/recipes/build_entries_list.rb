@@ -196,6 +196,7 @@ else
     Chef::Log.info("not deleting #{primary_platform_dns_name} because its not the last one")
   end
 
+  original_primary_platform_dns_name = primary_platform_dns_name
 
   aliases.each do |a|
     next if a.empty?
@@ -206,6 +207,8 @@ else
     alias_name = a  + customer_domain
     alias_platform_dns_name = alias_name.gsub("\."+service_attrs[:cloud_dns_id]+"\."+service_attrs[:zone],"."+service_attrs[:zone]).downcase
 
+    # change to glb from non-glb
+    deletable_entries.push({:name => alias_platform_dns_name, :values => original_primary_platform_dns_name })    
     if node.has_key?("gslb_domain") && !node.gslb_domain.nil?
       primary_platform_dns_name = node.gslb_domain
     end
@@ -220,6 +223,8 @@ else
       next if node.dns_action == "delete" && !node.is_last_active_cloud
 
       full_value = primary_platform_dns_name
+      # change to glb from non-glb
+      deletable_entries.push({:name => full, :values => original_primary_platform_dns_name})
       if node.has_key?("gslb_domain") && !node.gslb_domain.nil?
         full_value = node.gslb_domain
       end

@@ -153,6 +153,7 @@ node[:entries].each do |entry|
   Chef::Log.info("#{dns_name_for_lookup} new values: "+dns_values.sort.inspect)
 
   existing_dns = get_existing_dns(dns_name,ns)
+  existing_type = get_record_type(dns_name,existing_dns)
 
   Chef::Log.info("previous entries: #{node.previous_entries}")
   Chef::Log.info("deletable_values: #{deletable_values}")
@@ -173,7 +174,9 @@ node[:entries].each do |entry|
     # cleanup or delete
     existing_dns.each do |existing_entry|
       if deletable_values.include?(existing_entry) &&
-         (dns_values.include?(existing_entry) && node[:dns_action] == "delete") ||          
+         (dns_values.include?(existing_entry) && node[:dns_action] == "delete") ||
+         # change from/to glb
+         dns_type != existing_type && deleteable_values.include?(existing_entry) ||
          # value was in previous entry, but not anymore
          (!dns_values.include?(existing_entry) &&
           node.previous_entries.has_key?(dns_name) &&
