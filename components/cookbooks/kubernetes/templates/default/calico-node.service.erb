@@ -23,9 +23,9 @@ ExecStart=/usr/bin/docker run --net=host --privileged --name=calico-node \
   -v /var/log/calico:/var/log/calico \
 <%
 repo = "quay.io"
-#if node.kubernetes.has_key?("control_plane_repo") && !node.kubernetes.control_plane_repo.empty?
-#  repo = node.kubernetes.control_plane_repo
-#end
+if node.kubernetes.has_key?("control_plane_repo") && !node.kubernetes.control_plane_repo.empty?
+  repo = node.kubernetes.control_plane_repo
+end
 %>
   <%= repo %>/calico/node:latest
 ExecStop=/usr/bin/docker rm -f calico-node

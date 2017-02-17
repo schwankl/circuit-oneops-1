@@ -27,9 +27,9 @@ spec:
           # Make sure to pin this to your desired version.
 <%
 repo = "quay.io" 
-#if node.kubernetes.has_key?("control_plane_repo") && !node.kubernetes.control_plane_repo.empty?
-#  repo = node.kubernetes.control_plane_repo
-#end
+if node.kubernetes.has_key?("control_plane_repo") && !node.kubernetes.control_plane_repo.empty?
+  repo = node.kubernetes.control_plane_repo
+end
 %>
           image: <%= repo%>/calico/kube-policy-controller:v0.5.2
           env:
